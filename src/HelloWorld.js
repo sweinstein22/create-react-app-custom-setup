@@ -1,36 +1,61 @@
 import React from 'react';
-import randomWords from 'random-words';
 import {connect} from 'react-redux';
-import store from './ReduxStore';
+
+class Square extends React.Component {
+  render() {
+    let {index, boxColorSet, onClick} = this.props
+    return (
+      <button {...{onClick, className: boxColorSet[index] ? "green" : ""}} />
+    );
+  }
+}
 
 class HelloWorld extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      color: 'white'
+      boxColorSet: new Array(7).fill(false),
+      boxClickOrder: []
     };
   };
 
-  changeColor({color}) {
-    this.setState({color: color ? color : `#${Math.floor(Math.random() * 16777215).toString(16)}`});
+  unclickInOrder() {
+    let {boxColorSet, boxClickOrder} = this.state;
+    for (let i = boxClickOrder.length - 1; i > -1; i--) {
+      setTimeout(() => {
+        let index = boxClickOrder[i];
+        boxColorSet[index] = !boxColorSet[index];
+        this.setState({boxColorSet})
+      }, 500 * (7 - i));
+    };
+    this.setState({boxClickOrder: []});
   };
 
-  changeText({phrase}) {
-    store.dispatch({type: 'SET', path: 'text', value: phrase ? phrase : randomWords(2).join(' ')});
-  }
+  onClick(index) {
+    let {boxColorSet, boxClickOrder} = this.state;
+    boxColorSet[index] = !boxColorSet[index];
+    boxClickOrder.push(index);
+    this.setState({boxColorSet, boxClickOrder});
+
+    if (boxClickOrder.length === 7) {
+      this.unclickInOrder();
+    };
+  };
 
   render() {
-    let {text} = this.props;
-    let {color} = this.state;
+    let {boxColorSet} = this.state;
     return (
-      <span>
-        <div {...{style: {color}}} >{text}</div>
+      <div className="container">
+        <Square {...{index: 0, boxColorSet, onClick: () => this.onClick(0)}} />
+        <Square {...{index: 1, boxColorSet, onClick: () => this.onClick(1)}} />
+        <Square {...{index: 2, boxColorSet, onClick: () => this.onClick(2)}} />
         <br />
-        <button {...{onClick: () => this.changeColor({})}}>Change Color</button>
-        <button {...{onClick: () => this.changeColor({color: 'white'})}}>Reset Color</button>
-        <button {...{onClick: () => this.changeText({})}}>Change Text</button>
-        <button {...{onClick: () => this.changeText({phrase: 'hello, world!'})}}>Reset Text</button>
-      </span>
+        <Square {...{index: 3, boxColorSet, onClick: () => this.onClick(3)}} />
+        <br />
+        <Square {...{index: 4, boxColorSet, onClick: () => this.onClick(4)}} />
+        <Square {...{index: 5, boxColorSet, onClick: () => this.onClick(5)}} />
+        <Square {...{index: 6, boxColorSet, onClick: () => this.onClick(6)}} />
+      </div>
     );
   }
 };

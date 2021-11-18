@@ -12,12 +12,20 @@
   font-size: calc(10px + 2vmin);
 }
 
+.container {
+  text-align: left;
+}
+
 button {
   color: #0099CC;
   background-color: transparent;
   border: 1px solid #0099CC;
   border-radius: 5px;
   margin: 8px;
-  padding: 8px;
+  padding: 24px;
   text-transform: uppercase;
+}
+
+.green {
+  background-color: green;
 }
